@@ -1,0 +1,107 @@
+
+
+class Lz
+{
+    public class shif
+    {
+        public int offset;
+        public int length;
+        public string next;
+
+    }
+    static public void LZSS()
+    {
+
+        List<shif> ans = new List<shif>();
+        string buff = null;
+        Console.WriteLine("Введите слово");
+        string g = Console.ReadLine();
+        int posSlov = 1;
+
+
+        buff = buff + g.Substring(0, 1);
+        shif H = new shif();
+
+        H.next = g.Substring(0, 1);
+        H.length = 0;
+        H.offset = 0;
+
+        ans.Add(H);
+        while (posSlov < g.Length)
+        {
+
+            int l;
+
+            for (l = Math.Min(buff.Length, g.Length - posSlov); l >= 1; l--)
+            {
+
+                string subst = g.Substring(posSlov, l);
+                int indx = buff.IndexOf(subst);
+                if (indx != -1)
+                {
+                    indx = 8 - buff.Length + indx;
+                    shif sub = new shif();
+                    sub.offset = indx;
+                    sub.length = l;
+                    if (posSlov + l > g.Length - 1)
+                    {
+                        if (buff.Length + subst.Length >= 8)
+                        {
+                            buff = buff.Remove(0, subst.Length);
+                        }
+
+                        buff = buff + sub.next;
+                        ans.Add(sub);
+                        posSlov = posSlov + l;
+                        break;
+                    }
+                    else
+                        sub.next = g.Substring(posSlov + l, 1);
+                    if (buff.Length + subst.Length >= 8)
+                    {
+                        buff = buff.Remove(0, subst.Length);
+                    }
+                    posSlov = posSlov + l;
+                    buff = buff + subst;
+                    ans.Add(sub);
+                    break;
+
+                }
+            }
+            if (l == 0)
+            {
+                shif r = new shif();
+                r.next = g.Substring(posSlov, 1);
+                r.length = 0;
+                r.offset = 0;
+                if (buff.Length >= 8)
+                {
+                    buff = buff.Remove(0, 1);
+                }
+                ans.Add(r);
+                buff = buff + g.Substring(posSlov, 1);
+                posSlov = posSlov + 1;
+            }
+
+        }
+
+
+        foreach (var s in ans)
+        {
+            if (s.length != 0)
+            {
+                Console.WriteLine($"1<{s.offset},{s.length}>");
+            }
+            else
+            {
+                Console.WriteLine($"'0',{s.next}");
+            }
+
+        }
+    }
+
+    static void Main(string[] args)
+    {
+        LZSS();
+    }
+}
